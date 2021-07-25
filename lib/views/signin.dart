@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:quizapp2/services/auth.dart';
+import 'package:quizapp2/views/signup.dart';
 import 'package:quizapp2/widget/widget.dart';
+
+import 'home.dart';
 
 class SignIn extends StatefulWidget {
   final Function toogleView;
@@ -15,9 +19,45 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
 
   final AuthService _authService = AuthService();
+  final _formKey = GlobalKey<FormState>();
 
   TextEditingController emailEditingController = new TextEditingController();
   TextEditingController passwordEditingController = new TextEditingController();
+  String email = '', password = '';
+  bool isLoading = false;
+
+  signIn() async{
+    if(_formKey.currentState.validate()){
+
+      setState(() {
+        isLoading = true;
+      });
+      await _authService.signInEmailAndPass(email, password).then((val){
+        if(val != null){
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) => Home()
+          ));
+
+        }else{
+          Fluttertoast.showToast(
+              msg: "The password is invalid or the user does not have a password",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1
+          );
+
+          setState(() {
+            isLoading = false;
+          });
+        }
+
+      });
+
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,34 +74,55 @@ class _SignInState extends State<SignIn> {
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
+        child: isLoading
+            ? Container(
+          child: Center(child: CircularProgressIndicator()),
+        )
+            : Column(
           children: [
             Spacer(),
-            Container(
+            Form(
+              key: _formKey,
+              child: Container(
               child: Column(
                 children: [
-                  TextField(
+                  TextFormField(
+                    validator: (val) => validateEmail(email) ? null : "Enter correct Email Address",
                     decoration: InputDecoration(hintText: "Email"),
+                    onChanged: (val) {
+                      email = val;
+                    },
                   ),
                   SizedBox(
                     height: 6,
                   ),
-                  TextField(
+                  TextFormField(
+                    obscureText: true,
+                    validator: (val) =>
+                    val.isEmpty ? "Password must not be empty" : null,
                     decoration: InputDecoration(hintText: "Password"),
+                    onChanged: (val) {
+                      password = val;
+                    },
                   ),
                   SizedBox(
                     height: 24,
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                    decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(30)),
-                    child: Text(
-                      "Sign In",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                  GestureDetector(
+                    onTap: (){
+                      signIn();
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                      decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(30)),
+                      child: Text(
+                        "Sign In",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -72,7 +133,7 @@ class _SignInState extends State<SignIn> {
                     children: [
                       Text('Don\'t have an account? ',
                           style:
-                              TextStyle(color: Colors.black87, fontSize: 17)),
+                          TextStyle(color: Colors.black87, fontSize: 17)),
                       GestureDetector(
                         onTap: () {
                           widget.toogleView();
@@ -89,7 +150,7 @@ class _SignInState extends State<SignIn> {
                   ),
                 ],
               ),
-            ),
+            ),),
             SizedBox(
               height: 80,
             )

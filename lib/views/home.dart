@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quizapp2/helper/constants.dart';
 import 'package:quizapp2/services/database.dart';
 import 'package:quizapp2/views/create_quiz.dart';
 import 'package:quizapp2/views/quiz_play.dart';
 import 'package:quizapp2/widget/widget.dart';
+import 'package:quizapp2/widgets/navigation_drawer_widget.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -12,34 +15,41 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   Stream quizStream;
   DatabaseService databaseService = new DatabaseService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
 
   Widget quizList() {
     return Container(
       child: Column(
-        children: [
-          StreamBuilder(
-            stream: quizStream,
-            builder: (context, snapshot) {
-              return snapshot.data == null
-                  ? Container()
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: ClampingScrollPhysics(),
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (context, index) {
-                        return QuizTile(
-                          noOfQuestions: snapshot.data.documents.length,
-                          imageUrl:
-                              snapshot.data.documents[index].data['quizImgUrl'],
-                          title:
-                              snapshot.data.documents[index].data['quizTitle'],
-                          description:
-                              snapshot.data.documents[index].data['quizDesc'],
-                          id: snapshot.data.documents[index].data["id"],
-                        );
-                      });
-            },
-          )
+        children: <Widget>[
+          Container(
+            margin: const EdgeInsets.only(top: 10.0),
+            child: StreamBuilder(
+              stream: quizStream,
+              builder: (context, snapshot) {
+                return snapshot.data == null
+                    ? Container()
+                    :
+                ListView.builder(
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (context, index) {
+                          return QuizTile(
+                            noOfQuestions: snapshot.data.documents.length,
+                            imageUrl:
+                                snapshot.data.documents[index].data['quizImgUrl'],
+                            title:
+                                snapshot.data.documents[index].data['quizTitle'],
+                            description:
+                                snapshot.data.documents[index].data['quizDesc'],
+                            id: snapshot.data.documents[index].data["id"],
+                          );
+                        });
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
         ],
       ),
     );
@@ -57,6 +67,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: NavigationDrawerWidget(),
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: AppLogo(),

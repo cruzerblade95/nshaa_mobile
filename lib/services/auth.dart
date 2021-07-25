@@ -1,5 +1,9 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:quizapp2/models/user.dart';
+import 'package:quizapp2/views/home.dart';
+import 'package:quizapp2/views/signin.dart';
 
 class AuthService{
 
@@ -37,7 +41,7 @@ class AuthService{
   Future signOut() async{
 
     try{
-      return await _auth.signOut();
+       return await _auth.signOut();
     }catch(e){
       print(e.toString());
       return null;

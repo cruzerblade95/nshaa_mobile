@@ -11,6 +11,19 @@ class DatabaseService {
     });
   }
 
+  Future<void> addUserQuizData(String userId, Map quizData) async {
+    // Firestore.instance.collection("users").add(userData).catchError((e) {
+    //   print(e);
+    // });
+    await Firestore.instance
+        .collection("UserQuiz")
+        .document(userId)
+        .setData(quizData)
+        .catchError((e) {
+      print(e);
+    });
+  }
+
   getData() async {
     return await Firestore.instance.collection("users").snapshots();
   }

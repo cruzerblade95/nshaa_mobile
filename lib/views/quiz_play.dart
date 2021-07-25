@@ -123,7 +123,13 @@ class _QuizPlayState extends State<QuizPlay> {
                                     questionSnaphot.documents[index]),
                                 index: index,
                               );
-                            })
+                            }),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    InfoFooter(
+                      // length: questionSnaphot.documents.length,
+                    ),
                   ],
                 ),
               ),
@@ -341,6 +347,100 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class InfoFooter extends StatefulWidget {
+  // final int length;
+  //
+  // InfoHeader({@required this.length});
+
+  @override
+  _InfoFooterState createState() => _InfoFooterState();
+}
+
+class _InfoFooterState extends State<InfoFooter> {
+  DatabaseService databaseService = new DatabaseService();
+  final _formKey = GlobalKey<FormState>();
+
+  uploadUserQuizData() {
+    Map<String, String> questionMap = {
+      // "question": question,
+      // "option1": option1,
+      // "option2": option2,
+      // "option3": option3,
+      // "option4": option4
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Form(
+            key: _formKey,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+
+                      uploadUserQuizData();
+
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width / 2 - 20,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 20),
+                      decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(30)),
+                      child: Text(
+                        "Submit",
+                        style:
+                        TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+        // stream: infoStream,
+        // builder: (context, snapshot){
+        //   return snapshot.hasData ? Container(
+        //     height: 40,
+        //     margin: EdgeInsets.only(left: 14),
+        //     child: ListView(
+        //       scrollDirection: Axis.horizontal,
+        //       shrinkWrap: true,
+        //       children: <Widget>[
+        //         NoOfQuestionTile(
+        //           text: "Total",
+        //           // number: widget.length,
+        //         ),
+        //         NoOfQuestionTile(
+        //           text: "Correct",
+        //           number: _correct,
+        //         ),
+        //         NoOfQuestionTile(
+        //           text: "Incorrect",
+        //           number: _incorrect,
+        //         ),
+        //         NoOfQuestionTile(
+        //           text: "NotAttempted",
+        //           number: _notAttempted,
+        //         ),
+        //       ],
+        //     ),
+        //   ) : Container();
+        // }
     );
   }
 }
