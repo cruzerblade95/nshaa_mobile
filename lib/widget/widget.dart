@@ -6,7 +6,8 @@ class AppLogo extends StatelessWidget {
     return RichText(
       text: TextSpan(
         style: TextStyle(
-            fontSize: 22
+            fontSize: 22,
+            color: Colors.black54,
         ),
         children: <TextSpan>[
           TextSpan(text: 'Quiz', style: TextStyle(fontWeight: FontWeight.w600

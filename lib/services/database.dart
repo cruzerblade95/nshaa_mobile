@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
+
   final String uid;
+
 
   DatabaseService({this.uid});
 
@@ -11,13 +13,13 @@ class DatabaseService {
     });
   }
 
-  Future<void> addUserQuizData(String userId, Map quizData) async {
+  Future<void> addUserQuizData(String quizTitle, Map quizData) async {
     // Firestore.instance.collection("users").add(userData).catchError((e) {
     //   print(e);
     // });
     await Firestore.instance
-        .collection("UserQuiz")
-        .document(userId)
+        .collection("Result")
+        .document()
         .setData(quizData)
         .catchError((e) {
       print(e);
@@ -51,6 +53,13 @@ class DatabaseService {
 
   getQuizData() async {
     return await Firestore.instance.collection("Quiz").snapshots();
+  }
+
+  getResultUserData(String userEmail) async {
+    return await Firestore.instance
+        .collection("Result")
+        .where("email", isEqualTo: userEmail)
+        .snapshots();
   }
 
   getQuestionData(String quizId) async{

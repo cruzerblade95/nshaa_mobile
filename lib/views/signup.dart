@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:quizapp2/helper/constants.dart';
 import 'package:quizapp2/services/auth.dart';
 import 'package:quizapp2/services/database.dart';
 import 'package:quizapp2/views/home.dart';
-import 'package:quizapp2/widget/widget.dart';
+import 'package:quizapp2/views/signin.dart';
 
 class SignUp extends StatefulWidget {
   final Function toogleView;
@@ -52,13 +51,13 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: AppLogo(),
-        brightness: Brightness.light,
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
-        //brightness: Brightness.li,
-      ),
+      // appBar: AppBar(
+      //   title: AppLogo(),
+      //   brightness: Brightness.light,
+      //   elevation: 0.0,
+      //   backgroundColor: Colors.transparent,
+      //   //brightness: Brightness.li,
+      // ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: _loading
@@ -67,7 +66,12 @@ class _SignUpState extends State<SignUp> {
               )
             : Column(
                 children: [
-                  Spacer(),
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: FlutterLogo(),
+                    ),
+                  ),
                   Form(
                     key: _formKey,
                     child: Container(
@@ -139,7 +143,8 @@ class _SignUpState extends State<SignUp> {
                                       color: Colors.black87, fontSize: 17)),
                               GestureDetector(
                                 onTap: () {
-                                  widget.toogleView();
+                                  Navigator.push(
+                                      context, MaterialPageRoute(builder: (context) => SignIn()));
                                 },
                                 child: Container(
                                   child: Text('Sign In',

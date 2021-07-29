@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:quizapp2/helper/constants.dart';
 import 'package:quizapp2/services/auth.dart';
 import 'package:quizapp2/views/signup.dart';
-import 'package:quizapp2/widget/widget.dart';
 
 import 'home.dart';
 
@@ -37,6 +37,7 @@ class _SignInState extends State<SignIn> {
           setState(() {
             isLoading = false;
           });
+          Constants.saveUserLoggedInSharedPreference(true);
           Navigator.pushReplacement(context, MaterialPageRoute(
               builder: (context) => Home()
           ));
@@ -65,13 +66,13 @@ class _SignInState extends State<SignIn> {
         SystemUiOverlayStyle(statusBarColor: Colors.white));
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: AppLogo(),
-        brightness: Brightness.light,
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
-        //brightness: Brightness.li,
-      ),
+      // appBar: AppBar(
+      //   title: AppLogo(),
+      //   brightness: Brightness.light,
+      //   elevation: 0.0,
+      //   backgroundColor: Colors.transparent,
+      //   //brightness: Brightness.li,
+      // ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: isLoading
@@ -80,7 +81,12 @@ class _SignInState extends State<SignIn> {
         )
             : Column(
           children: [
-            Spacer(),
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: FlutterLogo(),
+              ),
+            ),
             Form(
               key: _formKey,
               child: Container(
@@ -136,7 +142,8 @@ class _SignInState extends State<SignIn> {
                           TextStyle(color: Colors.black87, fontSize: 17)),
                       GestureDetector(
                         onTap: () {
-                          widget.toogleView();
+                          Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => SignUp()));
                         },
                         child: Container(
                           child: Text('Sign Up',

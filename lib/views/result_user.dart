@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:quizapp2/services/database.dart';
-import 'package:quizapp2/views/create_quiz.dart';
-import 'package:quizapp2/views/quiz_play.dart';
 import 'package:quizapp2/widget/widget.dart';
 import 'package:quizapp2/widgets/navigation_drawer_widget.dart';
 
-class Home extends StatefulWidget {
+class ResultUser extends StatefulWidget {
+
+  final String userEmail;
+  ResultUser(this.userEmail);
+
   @override
-  _HomeState createState() => _HomeState();
+  _ResultUserState createState() => _ResultUserState();
 }
 
-class _HomeState extends State<Home> {
+class _ResultUserState extends State<ResultUser> {
   Stream quizStream;
   DatabaseService databaseService = new DatabaseService();
 
@@ -30,21 +32,20 @@ class _HomeState extends State<Home> {
                 )
                     :
                 ListView.builder(
-                        shrinkWrap: true,
-                        physics: ClampingScrollPhysics(),
-                        itemCount: snapshot.data.documents.length,
-                        itemBuilder: (context, index) {
-                          return QuizTile(
-                            noOfQuestions: snapshot.data.documents.length,
-                            imageUrl:
-                                snapshot.data.documents[index].data['quizImgUrl'],
-                            title:
-                                snapshot.data.documents[index].data['quizTitle'],
-                            description:
-                                snapshot.data.documents[index].data['quizDesc'],
-                            id: snapshot.data.documents[index].data["id"],
-                          );
-                        });
+                    shrinkWrap: true,
+                    physics: ClampingScrollPhysics(),
+                    itemCount: snapshot.data.documents.length,
+                    itemBuilder: (context, index) {
+                      return QuizTile(
+                        noOfQuestions: snapshot.data.documents.length,
+                        title:
+                        snapshot.data.documents[index].data['quizTitle'],
+                        correct:
+                        snapshot.data.documents[index].data['correct'],
+                        incorrect:
+                        snapshot.data.documents[index].data['incorrect'],
+                      );
+                    });
               },
             ),
           ),
@@ -56,10 +57,12 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    databaseService.getQuizData().then((value) {
+    databaseService.getResultUserData(widget.userEmail).then((value) {
       quizStream = value;
       setState(() {});
     });
+
+    print(quizStream);
     super.initState();
   }
 
@@ -76,35 +79,31 @@ class _HomeState extends State<Home> {
         //brightness: Brightness.li,
       ),
       body: quizList(),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => CreateQuiz()));
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(Icons.add),
+      //   onPressed: () {
+      //     Navigator.push(
+      //         context, MaterialPageRoute(builder: (context) => CreateQuiz()));
+      //   },
+      // ),
     );
   }
 }
 
 class QuizTile extends StatelessWidget {
-  final String imageUrl, title, id, description;
+  final String correct, title, incorrect;
   final int noOfQuestions;
 
   QuizTile(
       {@required this.title,
-      @required this.imageUrl,
-      @required this.description,
-      @required this.id,
-      @required this.noOfQuestions});
+        @required this.correct,
+        @required this.incorrect,
+        @required this.noOfQuestions});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(
-          builder: (context) => QuizPlay(id, title)
-        ));
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -113,11 +112,6 @@ class QuizTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           child: Stack(
             children: [
-              Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                width: MediaQuery.of(context).size.width,
-              ),
               Container(
                 color: Colors.black26,
                 child: Center(
@@ -133,12 +127,34 @@ class QuizTile extends StatelessWidget {
                       ),
                       SizedBox(height: 4,),
                       Text(
-                        description,
+                        "Correct",
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        correct,
                         style: TextStyle(
                             fontSize: 13,
                             color: Colors.white,
                             fontWeight: FontWeight.w500),
-                      )
+                      ),
+                      SizedBox(height: 4,),
+                      Text(
+                        "Incorrect",
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        incorrect,
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500),
+                      ),
                     ],
                   ),
                 ),

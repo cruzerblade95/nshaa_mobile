@@ -2,12 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:quizapp2/models/question_model.dart';
 import 'package:quizapp2/services/database.dart';
+import 'package:quizapp2/views/results.dart';
 import 'package:quizapp2/widget/widget.dart';
 import 'package:quizapp2/widgets/quiz_play_widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class QuizPlay extends StatefulWidget {
   final String quizId;
-  QuizPlay(this.quizId);
+  final String quizTitle;
+  QuizPlay(this.quizId, this.quizTitle);
 
   @override
   _QuizPlayState createState() => _QuizPlayState();
@@ -17,6 +20,7 @@ int _correct = 0;
 int _incorrect = 0;
 int _notAttempted = 0;
 int total = 0;
+String _quizTitle;
 
 /// Stream
 Stream infoStream;
@@ -34,6 +38,7 @@ class _QuizPlayState extends State<QuizPlay> {
       _notAttempted = questionSnaphot.documents.length;
       _correct = 0;
       _incorrect = 0;
+      _quizTitle = widget.quizTitle;
       isLoading = false;
       total = questionSnaphot.documents.length;
       setState(() {});
@@ -91,9 +96,10 @@ class _QuizPlayState extends State<QuizPlay> {
       appBar: AppBar(
         title: AppLogo(),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.blue[100],
         brightness: Brightness.light,
         elevation: 0.0,
+
       ),
       body: isLoading
           ? Container(
@@ -128,7 +134,7 @@ class _QuizPlayState extends State<QuizPlay> {
                       height: 10,
                     ),
                     InfoFooter(
-                      // length: questionSnaphot.documents.length,
+                      quizId: widget.quizId,
                     ),
                   ],
                 ),
@@ -352,27 +358,22 @@ class _QuizPlayTileState extends State<QuizPlayTile> {
 }
 
 class InfoFooter extends StatefulWidget {
-  // final int length;
-  //
-  // InfoHeader({@required this.length});
+  final String quizId;
+
+
+
+  InfoFooter({@required this.quizId});
 
   @override
   _InfoFooterState createState() => _InfoFooterState();
 }
 
 class _InfoFooterState extends State<InfoFooter> {
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
   DatabaseService databaseService = new DatabaseService();
   final _formKey = GlobalKey<FormState>();
-
-  uploadUserQuizData() {
-    Map<String, String> questionMap = {
-      // "question": question,
-      // "option1": option1,
-      // "option2": option2,
-      // "option3": option3,
-      // "option4": option4
-    };
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -387,9 +388,19 @@ class _InfoFooterState extends State<InfoFooter> {
                 children: [
                   GestureDetector(
                     onTap: () {
-
-                      uploadUserQuizData();
-
+                      Navigator.pushReplacement(context, MaterialPageRoute(
+                        builder: (context) => Results(
+                          quizTitle: _quizTitle,
+                          total: total,
+                          correct: _correct,
+                          incorrect: _incorrect,
+                          notattempted: _notAttempted,
+                        )
+                      ));
+                      // int _correct = 0;
+                      // int _incorrect = 0;
+                      // int _notAttempted = 0;
+                      // int total = 0;
                     },
                     child: Container(
                       alignment: Alignment.center,
